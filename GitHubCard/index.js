@@ -30,12 +30,7 @@ const cards = document.querySelector(".cards");
     user, and adding that card to the DOM.
 */
 //step 5
-const followersArray = [
-  'fidan93','tetondan',
-  'dustinmyers',
- 'justsml',
-  'luishrd',
-  'bigknell'];
+const followersArray = [];
 
   
 
@@ -59,7 +54,8 @@ const followersArray = [
     </div>
 */
 //step 3
-function createComponent({obj}){
+
+function createComponent(obj){
   const card = document.createElement("div");
   const image = document.createElement("img");
   const cardInfo = document.createElement("div");
@@ -101,21 +97,56 @@ function createComponent({obj}){
 
   return card;
 }
-//step 1
-followersArray.forEach((person) => {
-  axios
-  .get(`https://api.github.com/users/${person}`)
-  .then((res)=>{
-    const obj = res.data;
-  
-      const card = createComponent({obj});
-      cards.appendChild(card);
-    
+
+
+
+
+
+axios
+.get(`https://api.github.com/users/radelmann`)
+.then((res)=>{
+  const obj = res.data;
+  console.log(obj);
+    const card = createComponent(obj);
+    cards.appendChild(card);
+    axios
+  .get(res.data.followers_url)
+  .then((success)=>{
+    const follow = success.data;
+    follow.forEach((pers)=>{
+      axios
+      .get(`https://api.github.com/users/${pers.login}`)
+      .then((p) => {
+        cards.appendChild(createComponent(p.data));
+      })
+      .catch(()=>{
+        console.log(`error`)
+      })
+    })
   })
-  .catch((err)=>{
-    console.log(err);
+  .catch((fail)=>{
+    console.log(fail);
   })
 })
+.catch((err)=>{
+  console.log(err);
+})
+
+//step 1
+// followersArray.forEach((person) => {
+//   axios
+//   .get(`https://api.github.com/users/${person}`)
+//   .then((res)=>{
+//     const obj = res.data;
+  
+//       const card = createComponent({obj});
+//       cards.appendChild(card);
+    
+//   })
+//   .catch((err)=>{
+//     console.log(err);
+//   })
+// })
 
 
 
